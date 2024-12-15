@@ -1,4 +1,9 @@
-# Django HTMX Calculator
+# Django HTMX Tax Calculator
+
+> Note to the candidate:
+>
+> - this is an example from another project. Please update the Readme file with the correct information once you have completed the challenge.
+> - read the instruction for this challenge here : `_documentation\challenge_instructions.md`
 
 ### Description
 
@@ -16,13 +21,13 @@ The user can provide the price and tax information for the product in a flexible
 - `python manage.py migrate`: run the migrations
 - `python manage.py runserver`: start the server
 
-### Access the App 
+### Access the App
 
-- Open browser on http://localhost:8000/ to see the app  
+- Open browser on http://localhost:8000/ to see the app
 
 ### Usage
 
-- View Products: The products will be listed on the homepage, showing their name, price excluding tax, tax rate, and the calculated price including tax. 
+- View Products: The products will be listed on the homepage, showing their name, price excluding tax, tax rate, and the calculated price including tax.
 - Add New Product: Users can add a new product by providing a name, price excluding tax, and tax rate. The price including tax will be calculated automatically.
 - Edit Product: Users can click on any product to see its details and make updates. Changes made to the product will be reflected dynamically without a full page reload, thanks to HTMX.
 
@@ -32,15 +37,15 @@ The user can provide the price and tax information for the product in a flexible
 - Automatic Tax Calculation: If a product’s price excluding tax and tax rate are provided, the app will automatically calculate the price including tax.
 - Product Details: Users can click on a product to see its details and make edits, such as modifying the price excluding tax or tax rate.
 - Editable Form: Each product can be updated with new values for tax rate or price, and the missing values will be calculated dynamically.
-- Dynamic Updates: Using HTMX, the app dynamically updates the displayed products without needing a page reload. 
+- Dynamic Updates: Using HTMX, the app dynamically updates the displayed products without needing a page reload.
 
-### Technologies Used  
+### Technologies Used
 
 - Django: The backend framework for developing the web application.
 - HTMX: Used for dynamic updates and interactions without page reloads.
-- SQLite (or other databases): Default database for managing products (can be replaced with other databases like PostgreSQL, MySQL, etc.). 
+- SQLite (or other databases): Default database for managing products (can be replaced with other databases like PostgreSQL, MySQL, etc.).
 
-### Contribution  
+### Contribution
 
 If you'd like to contribute to this project:
 
