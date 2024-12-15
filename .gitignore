@@ -1,0 +1,16 @@
+# Python files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# VSCode files
+.vscode/
+
+# Virtual environment, and environment variables
+.env
+.venv/
+
+# Temp, local docs
+_docs
