@@ -1,5 +1,5 @@
-#  --------- core/models/flexup_enum_field.py
 from typing import Any
+
 from django.db import models
 from django.forms import ValidationError
 
@@ -10,14 +10,14 @@ class FlexUpEnumField(models.CharField):
     def __init__(self, flexup_enum, *args, **kwargs):
         self.flexup_enum = flexup_enum
         max_length = max(len(str(item.value)) for item in flexup_enum)
-        if 'max_length' in kwargs:
-            kwargs.pop('max_length', None)
+        if "max_length" in kwargs:
+            kwargs.pop("max_length", None)
 
         super().__init__(*args, max_length=max_length, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        kwargs['flexup_enum'] = self.flexup_enum
+        kwargs["flexup_enum"] = self.flexup_enum
 
         return name, path, args, kwargs
 
@@ -29,16 +29,15 @@ class FlexUpEnumField(models.CharField):
 
         return None
 
-
-#     def to_python(self, value): # Origina version
-#         if not isinstance(value, str) and value in self.flexup_enum:
-#             return value
-#
-#         for choice in self.flexup_enum:
-#             if choice.value == value:
-#                 return choice
-#
-#         return None
+    #     def to_python(self, value): # Origina version
+    #         if not isinstance(value, str) and value in self.flexup_enum:
+    #             return value
+    #
+    #         for choice in self.flexup_enum:
+    #             if choice.value == value:
+    #                 return choice
+    #
+    #         return None
 
     def to_python(self, value):
         if isinstance(value, self.flexup_enum):
@@ -48,8 +47,9 @@ class FlexUpEnumField(models.CharField):
         enum_value = self.flexup_enum.get_by_value(value)
         if enum_value is not None:
             return enum_value
-        raise ValidationError(f"Invalid value '{value}' for field {self.name}. Must be one of {[item.value for item in self.flexup_enum]}")
-
+        raise ValidationError(
+            f"Invalid value '{value}' for field {self.name}. Must be one of {[item.value for item in self.flexup_enum]}"
+        )
 
     def get_prep_value(self, value):
         if value is None:
@@ -63,6 +63,8 @@ class FlexUpEnumField(models.CharField):
         if enum_value is not None:
             return enum_value.value
 
-        raise ValueError(f"Invalid value '{value}' for field {self.name}. Must be one of {[item.value for item in self.flexup_enum]}")
+        raise ValueError(
+            f"Invalid value '{value}' for field {self.name}. Must be one of {[item.value for item in self.flexup_enum]}"
+        )
 
         # return str(value)

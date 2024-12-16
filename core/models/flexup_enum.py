@@ -1,8 +1,8 @@
-# -------- core/models/flexup_enum.py
-from enum_properties import EnumProperties
 from django.utils.translation import gettext_lazy as _
+from enum_properties import EnumProperties
 
 from utils.print_context import _print_context
+
 
 class ClassPropertyDescriptor:
     """A descriptor that enables defining class properties in the class body.
@@ -10,6 +10,7 @@ class ClassPropertyDescriptor:
     This descriptor allows class properties to be defined similarly to instance properties,
     but at the class level rather than instance level.
     """
+
     def __init__(self, fget):
         self.fget = fget
 
@@ -52,14 +53,16 @@ class FlexUpEnum(EnumProperties):
             THREE =   "H",    "Three",  "🍀",     None
 
     """
+
     # def __init__(self, *args):
     #     # Extract custom attributes from args and assign them
     #     if len(args) > 1:
     #         self.label = args[1]  # Example to assign label
 
-
     @classmethod
-    def is_valid(cls, input_value, short_list=None, property_name=None, property_value=None):
+    def is_valid(
+        cls, input_value, short_list=None, property_name=None, property_value=None
+    ):
         """
         Check if the given input_value is valid for this enum. Optionally filtered by a property (optionally with a value to match) and/or a short_list.
 
@@ -87,7 +90,6 @@ class FlexUpEnum(EnumProperties):
         else:
             value = input_value
 
-
         if short_list:
             # Handle both enum instances and (value, label) tuples in short_list
             valid_values_shl = []
@@ -99,9 +101,17 @@ class FlexUpEnum(EnumProperties):
 
         if property_name:
             if property_value:
-                valid_values_prop = [item.value for item in cls if getattr(item, property_name) == property_value]
+                valid_values_prop = [
+                    item.value
+                    for item in cls
+                    if getattr(item, property_name) == property_value
+                ]
             else:
-                valid_values_prop = [item.value for item in cls if getattr(item, property_name, None) is not None]
+                valid_values_prop = [
+                    item.value
+                    for item in cls
+                    if getattr(item, property_name, None) is not None
+                ]
         else:
             valid_values = [item.value for item in cls]
 
@@ -143,7 +153,11 @@ class FlexUpEnum(EnumProperties):
         - Returns:
             - list of tuples representing the enums for the allowed choices provided
         """
-        return [(item.value, item.label) for item in cls if getattr(item, property_name, None) is not None]
+        return [
+            (item.value, item.label)
+            for item in cls
+            if getattr(item, property_name, None) is not None
+        ]
 
     @classmethod
     def find_by_property(cls, property_name, value):
@@ -155,7 +169,11 @@ class FlexUpEnum(EnumProperties):
         - Returns:
             - A list of tuples representing the enums where the property has the given value.
         """
-        return [(item.value, item.label) for item in cls if getattr(item, property_name) == value]
+        return [
+            (item.value, item.label)
+            for item in cls
+            if getattr(item, property_name) == value
+        ]
 
     @classmethod
     def get_by_value(cls, value):
@@ -186,7 +204,7 @@ class FlexUpEnum(EnumProperties):
             # print(self_idx < other_idx)
             return self_idx < other_idx
         return self.value < other.value
-    
+
     # # use this version if the the comparison is based on name of the items, but this is redundant with the get_first_item utility function
     # def __lt__(self, other):
     #     if self.__class__ is other.__class__:

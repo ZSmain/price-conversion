@@ -1,6 +1,6 @@
 from django.test import TestCase
+
 from core.models.flexup_enum import FlexUpEnum
-from utils.print_context import _print_context
 
 
 class MockEnum(FlexUpEnum):
@@ -9,9 +9,10 @@ class MockEnum(FlexUpEnum):
     level: int
 
     # name =  value,  label,    symbol,   level
-    ONE =     "O",    "One",    "😅",    1
-    TWO =     "T",    "Two",    "⭐",    2
-    THREE =   "H",    "Three",  "🍀",    None
+    ONE = "O", "One", "😅", 1
+    TWO = "T", "Two", "⭐", 2
+    THREE = "H", "Three", "🍀", None
+
 
 MK = MockEnum
 
@@ -34,27 +35,20 @@ class TestFlexUpEnum(TestCase):
 
     def test_enum_instantiation(self):
         """Test basic enum instantiation and properties."""
-        self.assertEqual(MK.ONE.value, 'O')
-        self.assertEqual(MK.ONE.label, 'One')
-        self.assertEqual(MK.ONE.symbol, '😅')
+        self.assertEqual(MK.ONE.value, "O")
+        self.assertEqual(MK.ONE.label, "One")
+        self.assertEqual(MK.ONE.symbol, "😅")
         self.assertEqual(MK.ONE.level, 1)
 
     def test_choices(self):
         """Test the choices class property."""
-        expected_choices = [
-            self.tuple_one,
-            self.tuple_two,
-            self.tuple_three
-        ]
+        expected_choices = [self.tuple_one, self.tuple_two, self.tuple_three]
         self.assertEqual(MK.choices, expected_choices)
 
     def test_allowed_choices(self):
         """Test the allowed_choices method."""
         expected_choices = [self.tuple_one, self.tuple_two]
-        self.assertEqual(
-            MK.allowed_choices(MK.ONE, MK.TWO),
-            expected_choices
-        )
+        self.assertEqual(MK.allowed_choices(MK.ONE, MK.TWO), expected_choices)
 
     def test_filter_choices(self):
         """Test filtering choices by property."""
@@ -64,10 +58,7 @@ class TestFlexUpEnum(TestCase):
     def test_find_by_property(self):
         """Test finding choices by property value."""
         expected_choices = [self.tuple_two]
-        self.assertEqual(
-            MK.find_by_property("symbol", "⭐"),
-            expected_choices
-        )
+        self.assertEqual(MK.find_by_property("symbol", "⭐"), expected_choices)
 
     def test_str_representation(self):
         """Test string representation."""
@@ -78,11 +69,11 @@ class TestFlexUpEnum(TestCase):
     def test_is_valid_method(self):
         """Test the is_valid_value method."""
         # Test with raw values
-        self.assertTrue(MK.is_valid('O'))
-        self.assertTrue(MK.is_valid('T'))
-        self.assertTrue(MK.is_valid('H'))
-        self.assertFalse(MK.is_valid('X'))
-        self.assertFalse(MK.is_valid('🍀'))
+        self.assertTrue(MK.is_valid("O"))
+        self.assertTrue(MK.is_valid("T"))
+        self.assertTrue(MK.is_valid("H"))
+        self.assertFalse(MK.is_valid("X"))
+        self.assertFalse(MK.is_valid("🍀"))
 
         # Test with enum instances
         self.assertTrue(MK.is_valid(MK.ONE))
@@ -95,43 +86,41 @@ class TestFlexUpEnum(TestCase):
         self.assertFalse(MK.is_valid(foo))
 
         # Test with raw values and with property filtering
-        self.assertTrue(MK.is_valid('O', property_name='level'))
-        self.assertTrue(MK.is_valid('T', property_name='level'))
-        self.assertFalse(MK.is_valid('H', property_name='level'))
+        self.assertTrue(MK.is_valid("O", property_name="level"))
+        self.assertTrue(MK.is_valid("T", property_name="level"))
+        self.assertFalse(MK.is_valid("H", property_name="level"))
 
         # Test with raw values and with property filtering - using positional arguments
-        self.assertTrue(MK.is_valid('O', None, 'level'))
-        self.assertTrue(MK.is_valid('T', None, 'level'))
-        self.assertFalse(MK.is_valid('H', None, 'level'))
+        self.assertTrue(MK.is_valid("O", None, "level"))
+        self.assertTrue(MK.is_valid("T", None, "level"))
+        self.assertFalse(MK.is_valid("H", None, "level"))
 
         # Test with raw valueswith property filtering and value
-        self.assertTrue(MK.is_valid('T', None,'symbol', '⭐'))
-        self.assertFalse(MK.is_valid('O', None, 'symbol', '⭐'))
-        self.assertTrue(MK.is_valid('H', None,'symbol', '🍀'))
+        self.assertTrue(MK.is_valid("T", None, "symbol", "⭐"))
+        self.assertFalse(MK.is_valid("O", None, "symbol", "⭐"))
+        self.assertTrue(MK.is_valid("H", None, "symbol", "🍀"))
 
         # Tests with instances and property filtering
-        self.assertTrue(MK.is_valid(MK.ONE, None,'level'))
-        self.assertTrue(MK.is_valid(MK.TWO, None,'level', 2))
-        self.assertFalse(MK.is_valid(MK.THREE, None,'level'))
-        self.assertFalse(MK.is_valid(MK.TWO, None,'level', 3))
+        self.assertTrue(MK.is_valid(MK.ONE, None, "level"))
+        self.assertTrue(MK.is_valid(MK.TWO, None, "level", 2))
+        self.assertFalse(MK.is_valid(MK.THREE, None, "level"))
+        self.assertFalse(MK.is_valid(MK.TWO, None, "level", 3))
 
         # Test with values & instances and shortlist
-        self.assertTrue(MK.is_valid('O', ShortList1))
+        self.assertTrue(MK.is_valid("O", ShortList1))
         self.assertTrue(MK.is_valid(MK.ONE, ShortList1))
-        self.assertTrue(MK.is_valid('O', ShortList2))
+        self.assertTrue(MK.is_valid("O", ShortList2))
         self.assertTrue(MK.is_valid(MK.ONE, ShortList2))
-        self.assertFalse(MK.is_valid('H', ShortList2))
+        self.assertFalse(MK.is_valid("H", ShortList2))
 
         # Test with values & instances and shortlist and property together
-        self.assertTrue(MK.is_valid('O', ShortList1, 'level', 1 ))
-        self.assertTrue(MK.is_valid(MK.ONE, ShortList1, 'level', 1))
-        self.assertFalse(MK.is_valid('O', ShortList1, 'level', 2))
-        self.assertFalse(MK.is_valid('H', ShortList1, 'label', 'Three'))
-        self.assertTrue(MK.is_valid('O', ShortList1, 'level'))
-        self.assertFalse(MK.is_valid('H', ShortList3, 'level'))
-        self.assertTrue(MK.is_valid('H', ShortList3, 'label'))
-
-
+        self.assertTrue(MK.is_valid("O", ShortList1, "level", 1))
+        self.assertTrue(MK.is_valid(MK.ONE, ShortList1, "level", 1))
+        self.assertFalse(MK.is_valid("O", ShortList1, "level", 2))
+        self.assertFalse(MK.is_valid("H", ShortList1, "label", "Three"))
+        self.assertTrue(MK.is_valid("O", ShortList1, "level"))
+        self.assertFalse(MK.is_valid("H", ShortList3, "level"))
+        self.assertTrue(MK.is_valid("H", ShortList3, "label"))
 
 
 """
