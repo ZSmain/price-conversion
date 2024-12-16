@@ -14,3 +14,6 @@ __pycache__/
 
 # Temp, local docs
 _docs
+
+# Database
+db.sqlite3
