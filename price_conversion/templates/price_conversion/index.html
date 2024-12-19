@@ -39,14 +39,15 @@
               {% endfor %}
             </select>
           </div>
+
           <div class="input-group">
             <label for="from_unit">From Unit</label>
-            <select id="from_unit" name="from_unit" hx-get="{% url 'get_units_by_dimension' %}?unit={{ this.value }}"
-              hx-target="#to-unit-select" hx-trigger="change">
+            <select id="from_unit" name="from_unit" hx-get="{% url 'get_units_by_dimension' %}" hx-target="#to_unit"
+              hx-trigger="change" hx-include="this">
               {% for unit in units %}
-              <option value="{{ unit.name }}">
-                {{ unit.label }} ({{ unit.symbol }})
-              </option>
+              {% if unit.can_be_priced %}
+              <option value="{{ unit.name }}">{{ unit.label }} ({{ unit.symbol }})</option>
+              {% endif %}
               {% endfor %}
             </select>
           </div>
@@ -65,12 +66,11 @@
           </div>
           <div class="input-group">
             <label for="to_unit">To Unit</label>
-            <select id="to_unit" name="to_unit" hx-get="{% url 'get_units_by_dimension' %}?unit={{ this.value }}"
-              hx-target="[name='from_unit']" hx-trigger="change">
+            <select id="to_unit" name="to_unit" hx-trigger="change" hx-post="{% url 'convert' %}" hx-target="#result">
               {% for unit in units %}
-              <option value="{{ unit.name }}">
-                {{ unit.label }} ({{ unit.symbol }})
-              </option>
+              {% if unit.can_be_priced %}
+              <option value="{{ unit.name }}">{{ unit.label }} ({{ unit.symbol }})</option>
+              {% endif %}
               {% endfor %}
             </select>
           </div>
