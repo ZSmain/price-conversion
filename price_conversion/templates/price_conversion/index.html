@@ -1,0 +1,87 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Price Converter</title>
+
+  <link rel="stylesheet" href="{% static 'price_conversion/css/styles.css' %}" />
+</head>
+
+<body>
+  <div class="container">
+    <h2>Price Conversion (Currency & Unit)</h2>
+
+    <form id="converter-form" hx-post="{% url 'convert' %}" hx-trigger="input change delay:500ms" hx-target="#result"
+      hx-swap="innerHTML">
+      {% csrf_token %}
+      <div class="input-group">
+        <label for="from_price">From Price</label>
+        <input type="number" id="from_price" name="from_price" step="0.0001" value=""
+          hx-trigger="input changed delay:500ms" hx-post="{% url 'convert' %}" hx-target="#result" />
+      </div>
+
+      <div class="conversion-row">
+        <div class="from-section">
+          <div class="input-group">
+            <label for="from_currency">From Currency</label>
+            <select id="from_currency" name="from_currency" hx-trigger="change" hx-post="{% url 'convert' %}"
+              hx-target="#result">
+              {% for currency in currencies %}
+              <option value="{{ currency.name }}">
+                {{ currency.label }} ({{ currency.symbol }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="from_unit">From Unit</label>
+            <select id="from_unit" name="from_unit" hx-get="{% url 'get_units_by_dimension' %}?unit={{ this.value }}"
+              hx-target="#to-unit-select" hx-trigger="change">
+              {% for unit in units %}
+              <option value="{{ unit.name }}">
+                {{ unit.label }} ({{ unit.symbol }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="to-section">
+          <div class="input-group">
+            <label for="to_currency">To Currency</label>
+            <select id="to_currency" name="to_currency" hx-trigger="change" hx-post="{% url 'convert' %}"
+              hx-target="#result">
+              {% for currency in currencies %}
+              <option value="{{ currency.name }}">
+                {{ currency.label }} ({{ currency.symbol }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="to_unit">To Unit</label>
+            <select id="to_unit" name="to_unit" hx-get="{% url 'get_units_by_dimension' %}?unit={{ this.value }}"
+              hx-target="[name='from_unit']" hx-trigger="change">
+              {% for unit in units %}
+              <option value="{{ unit.name }}">
+                {{ unit.label }} ({{ unit.symbol }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</body>
+
+</html>
