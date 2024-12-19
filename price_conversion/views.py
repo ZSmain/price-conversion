@@ -95,3 +95,24 @@ def convert(request):
 
     return HttpResponse("Invalid request", status=400)
 
+
+def get_units_by_dimension(request):
+    unit_value = request.GET.get("from_unit")
+    try:
+        selected_unit = Unit[unit_value]
+        if selected_unit and selected_unit.dimension:
+            compatible_units = [
+                unit
+                for unit in Unit
+                if unit.dimension == selected_unit.dimension and unit.can_be_priced
+            ]
+            # Return only the options HTML
+            return render(
+                request,
+                "price_conversion/unit_options.html",
+                {"units": compatible_units},
+            )
+    except (KeyError, AttributeError):
+        pass
+    return HttpResponse("")
+
