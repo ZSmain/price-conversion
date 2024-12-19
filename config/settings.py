@@ -105,3 +105,6 @@ STATICFILES_DIRS = [BASE_DIR / "price_conversion/static"]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ExchangeRate API key
+EXCHANGE_RATE_API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")

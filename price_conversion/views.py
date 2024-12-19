@@ -1,7 +1,14 @@
+from decimal import Decimal
+
+import requests
+from django.conf import settings
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from .models import Conversion, ExchangeRate
+from django.utils import timezone
+
 from .enums.currency import Currency
 from .enums.unit import Unit
+from .models import Conversion, ExchangeRate
 
 
 def index(request):
@@ -14,4 +21,77 @@ def index(request):
         "units": units,
     }
     return render(request, "price_conversion/index.html", context)
+
+
+def convert(request):
+    if request.method == "POST":
+        from_currency_code = request.POST.get("from_currency")
+        to_currency_code = request.POST.get("to_currency")
+        from_price = Decimal(request.POST.get("from_price"))
+        from_unit_code = request.POST.get("from_unit")
+        to_unit_code = request.POST.get("to_unit")
+
+        # Convert currency codes to Currency enums
+        from_currency = Currency[from_currency_code]
+        to_currency = Currency[to_currency_code]
+
+        # Check and retrieve exchange rates
+        # Base currency is EUR
+        exchange_rates = {}
+        currencies = [from_currency, to_currency]
+        for currency in currencies:
+            if currency == Currency.EUR:
+                exchange_rates[currency] = 1.0
+                continue
+            try:
+                exchange_rate = ExchangeRate.objects.get(currency=currency)
+                exchange_rates[currency] = float(exchange_rate.rate)
+            except ExchangeRate.DoesNotExist:
+                # Fetch exchange rate from API and save
+                api_url = f"https://v6.exchangerate-api.com/v6/{settings.EXCHANGE_RATE_API_KEY}/pair/EUR/{currency.value}"
+                response = requests.get(api_url)
+                data = response.json()
+                if data.get("result", "") == "success":
+                    rate = data["conversion_rate"]
+                    ExchangeRate.objects.create(
+                        currency=currency,
+                        rate=Decimal(rate),
+                        date=timezone.datetime.strptime(
+                            data["time_last_update_utc"], "%a, %d %b %Y %H:%M:%S %z"
+                        ).date(),
+                    )
+                    exchange_rates[currency] = rate
+                else:
+                    return JsonResponse({"error": "Failed to fetch exchange rates"})
+
+        # Convert from_price to EUR
+        from_price_in_eur = from_price / Decimal(exchange_rates[from_currency])
+        # Convert EUR to to_currency
+        converted_price = from_price_in_eur * Decimal(exchange_rates[to_currency])
+
+        # Perform unit conversion
+        from_unit = Unit[from_unit_code]
+        to_unit = Unit[to_unit_code]
+        if from_unit.dimension == to_unit.dimension:
+            # Convert to base unit
+            from_quantity_in_base = converted_price * Decimal(from_unit.units_to_base)
+            # Convert to target unit
+            final_price = from_quantity_in_base / Decimal(to_unit.units_to_base)
+        else:
+            return JsonResponse({"error": "Units are not compatible"})
+
+        context = {
+            "from_price": from_price,
+            "from_currency_symbol": from_currency.symbol,
+            "from_unit": from_unit.symbol,
+            "converted_price": round(final_price, 4),
+            "to_currency_symbol": to_currency.symbol,
+            "to_unit": to_unit.symbol,
+            "conversion_rate": exchange_rates[to_currency]
+            / exchange_rates[from_currency],
+        }
+
+        return render(request, "price_conversion/conversion_result.html", context)
+
+    return HttpResponse("Invalid request", status=400)
 

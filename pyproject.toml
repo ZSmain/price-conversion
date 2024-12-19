@@ -8,4 +8,5 @@ dependencies = [
     "django>=5.1.4",
     "enum-properties>=2.0.1",
     "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
 ]
