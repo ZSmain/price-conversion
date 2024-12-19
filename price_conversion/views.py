@@ -116,3 +116,61 @@ def get_units_by_dimension(request):
         pass
     return HttpResponse("")
 
+
+def save_conversion(request):
+    if request.method == "POST":
+        try:
+            from_price = Decimal(request.POST["from_price"])
+            from_currency = Currency[request.POST["from_currency"]]
+            from_unit = Unit[request.POST["from_unit"]]
+            # Calculate the to_price from the result
+            exchange_rates = {}
+            currencies = [from_currency, Currency[request.POST["to_currency"]]]
+
+            for currency in currencies:
+                if currency == Currency.EUR:
+                    exchange_rates[currency] = 1.0
+                    continue
+                try:
+                    exchange_rate = ExchangeRate.objects.get(currency=currency)
+                    exchange_rates[currency] = float(exchange_rate.rate)
+                except ExchangeRate.DoesNotExist:
+                    return JsonResponse({"error": "Exchange rate not found"})
+
+            # Convert price
+            to_currency = Currency[request.POST["to_currency"]]
+            to_unit = Unit[request.POST["to_unit"]]
+
+            # Convert to EUR first
+            from_price_in_eur = from_price / Decimal(exchange_rates[from_currency])
+            # Convert EUR to target currency
+            converted_price = from_price_in_eur * Decimal(exchange_rates[to_currency])
+
+            # Convert units
+            if from_unit.dimension == to_unit.dimension:
+                from_quantity_in_base = converted_price * Decimal(
+                    from_unit.units_to_base
+                )
+                final_price = from_quantity_in_base / Decimal(to_unit.units_to_base)
+            else:
+                return JsonResponse({"error": "Units are not compatible"})
+
+            conversion = Conversion.objects.create(
+                from_price=from_price,
+                from_currency=from_currency,
+                from_unit=from_unit,
+                to_price=round(final_price, 4),
+                to_currency=to_currency,
+                to_unit=to_unit,
+            )
+
+            return render(
+                request,
+                "price_conversion/conversion_row.html",
+                {"conversion": conversion},
+            )
+        except (KeyError, ValueError) as e:
+            return JsonResponse({"error": str(e)})
+
+    return JsonResponse({"error": "Invalid request"})
+

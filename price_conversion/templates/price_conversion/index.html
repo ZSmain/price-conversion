@@ -90,8 +90,36 @@
         <div class="rate">Conversion rate: {{ conversion_rate }}</div>
       </div>
 
+      <button type="button" class="btn save-btn" hx-post="{% url 'save_conversion' %}" hx-include="#converter-form"
+        hx-target="#history-tbody" hx-swap="afterbegin">
+        Save Conversion
+      </button>
     </form>
 
+    <div class="history-section">
+      <div class="history-header">
+        <h3>Conversion History</h3>
+        <button class="btn new-btn" hx-post="{% url 'new_conversion' %}" hx-swap="none">
+          New Conversion
+        </button>
+      </div>
+
+      <table class="history-table">
+        <thead class="history-theader">
+          <tr>
+            <th>Nr</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody">
+          {% for conversion in conversions %}
+          {% include 'price_conversion/conversion_row.html' %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
