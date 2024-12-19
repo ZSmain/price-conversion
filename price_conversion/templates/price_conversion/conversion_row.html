@@ -3,7 +3,8 @@
 	<td>{{ conversion.from_price }} {{ conversion.from_currency.symbol }}/{{ conversion.from_unit.symbol }}</td>
 	<td>{{ conversion.to_price }} {{ conversion.to_currency.symbol }}/{{ conversion.to_unit.symbol }}</td>
 	<td>
-		<a style="cursor: pointer;" aria-label="Delete conversion">
+		<a style="cursor: pointer;" hx-delete="{% url 'delete_conversion' conversion.id %}"
+			hx-target="#conversion-{{ conversion.id }}" hx-swap="outerHTML" aria-label="Delete conversion">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
 				stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 				class="lucide lucide-trash">
@@ -13,4 +14,13 @@
 			</svg>
 		</a>
 	</td>
+
+	<script>
+		document.addEventListener("htmx:configRequest", function (event) {
+			var csrfToken = document.querySelector(
+				"[name=csrfmiddlewaretoken]"
+			).value;
+			event.detail.headers["X-CSRFToken"] = csrfToken; // Ajoute le token CSRF dans les en-têtes
+		});
+	</script>
 </tr>

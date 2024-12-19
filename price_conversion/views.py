@@ -174,3 +174,9 @@ def save_conversion(request):
 
     return JsonResponse({"error": "Invalid request"})
 
+
+def delete_conversion(request, pk):
+    conversion = get_object_or_404(Conversion, pk=pk)
+    conversion.delete()
+    return HttpResponse("")
+

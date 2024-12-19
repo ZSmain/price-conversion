@@ -5,6 +5,7 @@ from .views import (
     convert,
     get_units_by_dimension,
     save_conversion,
+    delete_conversion,
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path("convert/", convert, name="convert"),
     path("get-units/", get_units_by_dimension, name="get_units_by_dimension"),
     path("save-conversion/", save_conversion, name="save_conversion"),
+    path("delete-conversion/<int:pk>/", delete_conversion, name="delete_conversion"),
 ]
