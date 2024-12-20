@@ -1,11 +1,11 @@
 from django.urls import path
 
 from .views import (
-    index,
     convert,
-    get_units_by_dimension,
-    save_conversion,
     delete_conversion,
+    get_units_by_dimension,
+    index,
+    save_conversion,
 )
 
 urlpatterns = [

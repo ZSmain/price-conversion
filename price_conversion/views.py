@@ -179,4 +179,3 @@ def delete_conversion(request, pk):
     conversion = get_object_or_404(Conversion, pk=pk)
     conversion.delete()
     return HttpResponse("")
-
