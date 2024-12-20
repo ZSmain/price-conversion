@@ -1,7 +1,13 @@
 <tr id="conversion-{{ conversion.id }}">
-	<td>{{ forloop.counter }}</td>
-	<td>{{ conversion.from_price }} {{ conversion.from_currency.symbol }}/{{ conversion.from_unit.symbol }}</td>
-	<td>{{ conversion.to_price }} {{ conversion.to_currency.symbol }}/{{ conversion.to_unit.symbol }}</td>
+	<td>
+		{{ forloop.counter }}
+	</td>
+	<td>
+		{{ conversion.from_price|floatformat:2 }} {{ conversion.from_currency.symbol }}/{{ conversion.from_unit.symbol}}
+	</td>
+	<td>
+		{{ conversion.to_price|floatformat:2 }} {{ conversion.to_currency.symbol }}/{{ conversion.to_unit.symbol }}
+	</td>
 	<td>
 		<a style="cursor: pointer;" hx-delete="{% url 'delete_conversion' conversion.id %}"
 			hx-target="#conversion-{{ conversion.id }}" hx-swap="outerHTML" aria-label="Delete conversion">

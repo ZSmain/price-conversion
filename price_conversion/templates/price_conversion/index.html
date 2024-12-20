@@ -80,14 +80,14 @@
       <div id="result" class="result-section">
         <div class="conversion-result">
           <div class="input-value">
-            {{ price }} {{ from_currency_symbol }}/{{ from_unit }}
+            {{ price|floatformat:2 }} {{ from_currency_symbol }}/{{ from_unit }}
           </div>
           <div class="arrow">➜</div>
           <div class="output-value">
-            {{ converted_price }} {{ to_currency_symbol }}/{{ to_unit }}
+            {{ converted_price|floatformat:2 }} {{ to_currency_symbol }}/{{ to_unit }}
           </div>
         </div>
-        <div class="rate">Conversion rate: {{ conversion_rate }}</div>
+        <div class="rate">Conversion rate: {{ conversion_rate|floatformat:2 }}</div>
       </div>
 
       <button type="button" class="btn save-btn" hx-post="{% url 'save_conversion' %}" hx-include="#converter-form"
