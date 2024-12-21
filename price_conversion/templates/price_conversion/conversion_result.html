@@ -4,5 +4,5 @@
         <div class="arrow">➜</div>
         <div class="output-value">{{ converted_price }} {{ to_currency_symbol }}/{{ to_unit }}</div>
     </div>
-    <div class="rate">Conversion rate: {{ conversion_rate }}</div>
+    <div class="rate">Conversion rate: {{ conversion_rate|floatformat:4 }}</div>
 </div>
