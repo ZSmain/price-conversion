@@ -12,6 +12,8 @@ The user can provide the price and tax information for the product in a flexible
 
 ### Installation
 
+#### Using venv:
+
 - `python -m venv .venv`: to create a virtual environment in the root folder
 - to activate it using a build in script
   - `source .venv/bin/activate`: in Linux
@@ -20,6 +22,50 @@ The user can provide the price and tax information for the product in a flexible
 - `python manage.py makemigrations`: make the migrations
 - `python manage.py migrate`: run the migrations
 - `python manage.py runserver`: start the server
+
+#### Using `uv`:
+
+- Install uv on linux:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+- To create a virtual environment and install the dependencies:
+
+```bash
+uv sync
+```
+
+- Install make on linux (debian based):
+
+```bash
+sudo apt install make
+```
+
+- Add a `.env` file in the root folder with the following content:
+
+```bash
+# Django secret key
+SECRET_KEY=your_secret_key
+
+# Debug mode
+DEBUG=True
+
+# Exchange rate API key
+EXCHANGE_RATE_API_KEY=your_exchange_rate_api_key
+```
+
+- To run the app:
+
+```bash
+# Make the migrations
+make makemigrations
+# Run the migrations
+make migrate
+# Start the server
+make runserver
+```
 
 ### Access the App
 
